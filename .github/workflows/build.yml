@@ -29,6 +29,9 @@ jobs:
           name: online-miv-${{ env.version }}
           path: ./dist
 
+    - name: add page CNAME
+      run: echo "online.suo.ac" > ./dist/CNAME   
+
     - name: deploy github page
       uses: peaceiris/actions-gh-pages@v3
       with:
