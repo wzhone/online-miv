@@ -1,0 +1,38 @@
+name: Build project
+  
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest	
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+
+    - name: build
+      run: |
+        npm install
+        npm run build
+
+    - name: get version
+      run: echo version=${GITHUB_REF##*/} >> $GITHUB_ENV
+
+    - uses: actions/upload-artifact@v2
+      with:
+          retention-days: 1
+          name: online-miv-${{ env.version }}
+          path: ./dist
+
+    - name: deploy github page
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        personal_token: ${{ secrets.PUBLISH }}
+        publish_branch: master
+        publish_dir: ./dist
+        external_repository: wzhone/online
